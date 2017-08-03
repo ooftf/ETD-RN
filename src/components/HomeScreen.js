@@ -37,6 +37,10 @@ const MyTab = TabNavigator({
     tabBarPosition: 'bottom',
 })
 export default class HomeScreen extends Component {
+    static navigationOptions = {
+        header: null
+    };
+
     constructor() {
         super();
         this.state = {
@@ -45,7 +49,7 @@ export default class HomeScreen extends Component {
     }
 
     getHomeSource() {
-        if (this.state.selectedIndex == 0) {
+        if (this.state.selectedIndex === 0) {
             return require('../image/bottom_home_selected.png')
         } else {
             return require('../image/bottom_home_unselected.png')
@@ -53,7 +57,7 @@ export default class HomeScreen extends Component {
     }
 
     getProjectsSource() {
-        if (this.state.selectedIndex == 1) {
+        if (this.state.selectedIndex === 1) {
             return require('../image/bottom_projects_selected.png')
         } else {
             return require('../image/bottom_projects_unselected.png')
@@ -61,7 +65,7 @@ export default class HomeScreen extends Component {
     }
 
     getAccountSource() {
-        if (this.state.selectedIndex == 2) {
+        if (this.state.selectedIndex === 2) {
             return require('../image/bottom_account_selected.png')
         } else {
             return require('../image/bottom_account_unselected.png')
@@ -69,39 +73,59 @@ export default class HomeScreen extends Component {
     }
 
     getMoreSource() {
-        if (this.state.selectedIndex == 3) {
+        if (this.state.selectedIndex === 3) {
             return require('../image/bottom_more_selected.png')
         } else {
             return require('../image/bottom_more_unselected.png')
         }
     }
-    homePress(){
-        this.setState ( {
-            selectedIndex:0
+
+    homePress() {
+        this.setState({
+            selectedIndex: 0
         })
-    }
-    projectPress(){
-        this.setState ( {
-            selectedIndex:1
+    };
+
+    projectPress() {
+        this.setState({
+            selectedIndex: 1
         })
-    }
-    accountPress(){
-        this.setState ( {
-            selectedIndex:2
+    };
+
+    accountPress() {
+        this.setState({
+            selectedIndex: 2
         })
-    }
-    morePress(){
-        this.setState ( {
-            selectedIndex:3
+    };
+
+    morePress() {
+        this.setState({
+            selectedIndex: 3
         })
+    };
+
+    getContentTab() {
+        if (this.state.selectedIndex === 0) {
+            return (<HomeTab style={styles.fragment}/>)
+        } else if (this.state.selectedIndex === 1) {
+            return (<ProjectTab style={styles.fragment}/>)
+        } else if (this.state.selectedIndex === 2) {
+            return (<AccountTab style={styles.fragment}/>)
+        } else if (this.state.selectedIndex === 3) {
+            return (<MoreTab style={styles.fragment}/>)
+        }
     }
+
     render() {
         return (
             <View style={styles.container}>
-                <View style={styles.fragment}></View>
+                <View style={styles.fragment}>
+                    {this.getContentTab()}
+                </View>
+                <View style={styles.line}></View>
                 <View style={styles.tabs}>
                     <TouchableOpacity
-                        onPress={()=>this.homePress()}
+                        onPress={this.homePress.bind(this)}
                         style={styles.tab}>
                         <Image
                             resizeMode="center"
@@ -109,7 +133,7 @@ export default class HomeScreen extends Component {
                             source={this.getHomeSource()}/>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        onPress={()=>this.projectPress()}
+                        onPress={this.projectPress.bind(this)}
                         style={styles.tab}>
                         <Image
                             resizeMode="center"
@@ -117,7 +141,7 @@ export default class HomeScreen extends Component {
                             source={this.getProjectsSource()}/>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        onPress={()=>this.accountPress()}
+                        onPress={this.accountPress.bind(this)}
                         style={styles.tab}>
                         <Image
                             resizeMode="center"
@@ -125,7 +149,7 @@ export default class HomeScreen extends Component {
                             source={this.getAccountSource()}/>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        onPress={()=>this.morePress()}
+                        onPress={this.morePress.bind(this)}
                         style={styles.tab}>
                         <Image
                             resizeMode="center"
@@ -148,6 +172,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5FCFF',
     },
     fragment: {
+        width:'100%',
+        height:'100%',
         flex: 1
     },
     tabs: {
@@ -162,5 +188,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         flex: 1,
         height: 40,
+    },
+    line: {
+        height: 0.5, width: '100%', backgroundColor: '#E8E8E8'
     }
 })

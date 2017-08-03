@@ -6,10 +6,10 @@ import {
     ViewPagerAndroid
 } from 'react-native';
 import React, {Component} from 'react';
-export default class MoreTab extends Component{
+export default class CreditTab extends Component{
     render(){
         return(<View>
-            <Text>MoreTab</Text>
+            <Text>CreditTab</Text>
         </View>)
     }
 }
