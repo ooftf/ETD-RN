@@ -3,71 +3,185 @@ import {
     Image,
     Text, TouchableOpacity,
     View,
+    StyleSheet,
     ViewPagerAndroid
 } from 'react-native';
 import React, {Component} from 'react';
-import ImageCode from "../widget/ImageCode";
+import LoginScreen from "../LoginScreen";
 
 export default class InvestTab extends Component {
-    constructor(){
+    constructor() {
         super();
-        this.state={
-            projectList:null
+        this.state = {
+            projectList: null
         }
-
+    }
+    geformData(){
+        let formData = new FormData();
+        formData.append("pageSize","10");
+        formData.append("page","1");
+        formData.append("sort","asc");
+        formData.append("userType","0");
+        console.log(JSON.stringify(formData))
+        return formData;
+        //'pageSize=10&page=1&sort=asc&userType=0'
     }
     requestInvestData() {
+        console.log("fetch")
         return fetch('https://api.etongdai.com/service/investments/list', {
             method: 'POST',
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: 'pageSize=10&page=1&sort=asc&orderArgs=0&userType=0'//排序顺序 asc-顺序 desc-倒序 排序字段0-借款金额,1-按预期年化收益,2-借款期限,默认不填发布时间
+            body: 'pageSize=10&page=1&sort=asc&userType=0', //排序顺序 asc-顺序 desc-倒序  orderArgs:排序字段0-借款金额,1-按预期年化收益,2-借款期限,默认不填发布时间
         }).then((response) => {
+                console.log("response.json()")
                 return response.json()
             }
         ).catch((error) => {
             console.error(error);
         });
     }
+
     componentWillMount() {
-        this.requestInvestData().then((responseJson)=>{
-            console.log("requestInvestData"+responseJson.success)
+        this.requestInvestData().then((responseJson) => {
+            console.log("requestInvestData"+responseJson.body.list.length)
             this.setState({
-                projectList:responseJson.body.list
+                projectList: responseJson.body.list
             })
+            console.log("this.state.projectList" + this.state.projectList)
         });
     }
 
     render() {
-        return (<View>
-            <Text>{this.state.projectList}</Text>
-            <FlatList
-                data={this.state.projectList}
-                renderItem={({item}) => {
-                    console.log("...."+item)
-                    return <Item data={item}/>
-                }}
-            />
-        </View>)
+        return (
+            this.state.projectList === null ? <Text> 加载中... </Text> :
+                <View style={styles.fragment}>
+                    <FlatList
+                        style={styles.fragment}
+                        keyExtractor={(item, index) => item.iteId}
+                        data={this.state.projectList}
+                        renderItem={({item}) => {
+                            console.log("...." + item)
+                            return <Item data={item} name="AA"/>
+                        }}
+                    />
+                </View>)
     }
 
 
 }
-class Item extends Component{
-    render(){
-        function getSourceXinOrDi(){
-            return (this.props.data.iteType===1?require('../../image/di.png'):require('../../image/xin.png'))
+
+class Item extends Component {
+    getSourceXinOrDi() {
+        console.log("this.props.name" + this.props.name)
+        return (this.props.data.iteType === 1 ? require('../../image/di.png') : require('../../image/xin.png'))
+    }
+
+    getProgressWidth(data) {
+        let progress = data.iteProgress * 100 - 6
+        if (progress < 0) {
+            progress = 0
         }
-        console.log("...."+this.props.data)
-        return(
-            <View style={{height:120,width:'100%',backgroundColor:'white'}}>
-                <View style={{height:20,width:'100%',flexDirection:'row'}}>
-                    <Text>{this.props.data.iteTitle}</Text><Image source={getSourceXinOrDi()}/>
+        ;
+        if (progress > 85) {
+            progress = 85
+        }
+        return progress + '%'
+    }
+
+    render() {
+        console.log("...." + this.props.data)
+        let data = this.props.data
+        return (
+            <View style={{height: 150, width: '100%', backgroundColor: 'white', margin: 5, alignItems: 'center',}}>
+                <View style={{height: 30, width: '100%', flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={styles.title}>{data.iteTitle}</Text>< Image
+                    style={{height: 20, width: 20, paddingRight: 20}} source={this.getSourceXinOrDi()}/>
                 </View>
                 <View style={styles.line}/>
+                <View style={{
+                    height: 80,
+                    width: '100%',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                }}>
+                    <View style={{
+                        height: '80%',
+                        width: '50%',
+                        flexDirection: "column",
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}>
+                        <View style={{
+                            height: '50%',
+                            width: '100%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}>
+                            <Text style={styles.returnRate}>{(data.iteYearRate * 100).toFixed(2)}</Text>
+                            <Text style={{fontSize: 15, color: 'red', alignSelf: "flex-end", marginBottom: 5}}>%</Text>
+                        </View>
+                        <View style={{alignItems: 'center', justifyContent: 'center', height: '50%'}}><Text>
+                            预期投资回报率</Text></View>
+                    </View>
+                    <View style={{height: '80%', width: 0.5, backgroundColor: '#E8E8E8'}}/>
+                    <View style={{
+                        height: '90%',
+                        width: '50%',
+                        flexDirection: "column",
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}>
+                        <View style={{flexDirection: 'row', height: '50%', alignItems: 'center'}}><Text
+                            style={{width: '40%'}}>期限</Text><Text
+                            style={{width: '40%'}}>{data.iteRepayDate}{data.iteRepayIntervalName}</Text></View>
+                        <View style={{flexDirection: 'row', height: '50%', alignItems: 'center'}}><Text
+                            style={{width: '40%'}}>贷款金额</Text><Text
+                            style={{width: '40%'}}>{data.iteLimitYuan}</Text></View>
+                    </View>
+                </View>
+                <View style={{flexDirection: 'row', height: 2, width: '90%'}}>
+                    <View
+                        style={{height: 2, width: (data.iteProgress * 100 + '%'), backgroundColor: '#2ea7e0'}}/><View/>
+                    <View style={{height: 2, width: ((1 - data.iteProgress) * 100 + '%'), backgroundColor: '#DDDDDD'}}/><View/>
+                </View>
+                <View style={{flexDirection: 'row', height: 2, width: '90%'}}>
+                    <Text style={{
+                        marginLeft:(this.getProgressWidth(data)),
+                        textAlign: "right",
+                        alignSelf: 'flex-start'
+                    }}>{(data.iteProgress * 100).toFixed(2)}%</Text>
+                </View>
+
             </View>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F5FCFF',
+    },
+    fragment: {
+        width: '100%',
+        height: '100%',
+        flex: 1
+    },
+    title: {
+        fontSize: 12,
+        paddingRight: 5,
+        paddingLeft: 20,
+    },
+    returnRate: {
+        fontSize: 30,
+        color: 'red',
+    },
+    line: {
+        height: 0.5, width: '100%', backgroundColor: '#E8E8E8'
+    }
+})

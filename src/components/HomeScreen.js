@@ -177,6 +177,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     tabs: {
+        backgroundColor:'white',
         paddingTop: 5,
         paddingBottom: 5,
         flexDirection: 'row',
