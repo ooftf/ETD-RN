@@ -6,7 +6,7 @@ import {
     View,
     ViewPagerAndroid
 } from 'react-native';
-
+import ToastNative from './android_native/ToastNative'
 export default class GuideScreen extends Component {
     static navigationOptions = {
         header: null
@@ -30,7 +30,10 @@ export default class GuideScreen extends Component {
                 <View style={styles.fillView}>
                     <Image style={styles.fillView} source={require("../image/guide_second.png")}>
                         <TouchableOpacity
-                            onPress={()=>this.props.navigation.navigate("HomeScreen")}>
+                            onPress={()=>{
+                                ToastNative.show('Awesome', ToastNative.SHORT)
+                                //this.props.navigation.navigate("HomeScreen")
+                            }}>
                             <Image
                                 style={styles.skip}
                                 source={require("../image/guide_skip.png")}/>

@@ -4,6 +4,7 @@ import {
     StyleSheet,
     ActivityIndicator, TouchableOpacity,
 } from 'react-native';
+import constant from "../engine/constant";
 
 export default class ImageCode extends Component {
     constructor() {
@@ -22,7 +23,7 @@ export default class ImageCode extends Component {
             imageBase64: null,
             state: 0
         })
-        return fetch('https://api.etongdai.com/service/system/identify')
+        return fetch(constant.baseUrl+'system/identify')
             .then((response) => {
                 return response.json()
             })

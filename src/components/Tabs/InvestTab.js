@@ -1,41 +1,97 @@
 import {
     Button, FlatList,
     Image,
-    Text, TouchableOpacity,
+    Text,
     View,
     StyleSheet,
-    ViewPagerAndroid
 } from 'react-native';
 import React, {Component} from 'react';
 import LoginScreen from "../LoginScreen";
+import constant from "../engine/constant";
 
 export default class InvestTab extends Component {
     constructor() {
         super();
         this.state = {
-            projectList: null
+            projectList: null,
+            isRefreshing: false,
+            page: 1,
+            hasMore: false,
+            isLoadingMore:false,
         }
     }
-    geformData(){
+
+    geformData() {
         let formData = new FormData();
-        formData.append("pageSize","10");
-        formData.append("page","1");
-        formData.append("sort","asc");
-        formData.append("userType","0");
+        formData.append("pageSize", "10");
+        formData.append("page", "1");
+        formData.append("sort", "asc");
+        formData.append("userType", "0");
         console.log(JSON.stringify(formData))
         return formData;
         //'pageSize=10&page=1&sort=asc&userType=0'
     }
+
+    _onRefresh() {
+        console.log('_onRefresh');
+        if(this.state.isLoadingMore||this.state.isRefreshing)return
+        this.setState(() => {
+            console.log('setState' + this.state.page);
+            return {
+                isRefreshing: true,
+                page: 1,
+            }
+
+        },()=>{
+            console.log('after SetState' + this.state.page);
+            this.requestInvestData().then((responseJson) => {
+                console.log("responseJson" + responseJson.body.list.length)
+                this.setState((previousState) => {
+                    return {
+                        projectList: responseJson.body.list,
+                        isRefreshing: false,
+                        page: (previousState.page + 1),
+                        hasMore: (responseJson.body.totalRecordNum > responseJson.body.list.length),
+                    }
+                })
+                console.log("this.state.projectList" + this.state.projectList)
+            });
+        })
+    }
+
+    _onLoadMore() {
+        console.log('_onLoadMore');
+        if(this.state.isLoadingMore||this.state.isRefreshing)return
+        if (!this.state.hasMore) return
+        this.setState(
+            {isLoadingMore:true},()=>{
+                this.requestInvestData().then((responseJson) => {
+                    console.log("requestInvestData" + responseJson.body.list.length)
+                    this.setState((previousState) => {
+                        let newProjectList = previousState.projectList.concat(responseJson.body.list);
+                        return {
+                            projectList: newProjectList,
+                            page: (previousState.page + 1),
+                            hasMore: (responseJson.body.totalRecordNum > newProjectList.length),
+                            isLoadingMore:false,
+                        }
+
+                    })
+                    console.log("this.state.projectList" + this.state.projectList)
+                });
+            }
+        )
+    }
+
     requestInvestData() {
-        console.log("fetch")
-        return fetch('https://api.etongdai.com/service/investments/list', {
+        console.log("fetch::" + this.state.page)
+        return fetch(constant.baseUrl+'investments/list', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: 'pageSize=10&page=1&sort=asc&userType=0', //排序顺序 asc-顺序 desc-倒序  orderArgs:排序字段0-借款金额,1-按预期年化收益,2-借款期限,默认不填发布时间
+            body: 'pageSize=10&page=' + this.state.page + '&sort=asc&userType=0', //排序顺序 asc-顺序 desc-倒序  orderArgs:排序字段0-借款金额,1-按预期年化收益,2-借款期限,默认不填发布时间
         }).then((response) => {
-                console.log("response.json()")
                 return response.json()
             }
         ).catch((error) => {
@@ -44,13 +100,7 @@ export default class InvestTab extends Component {
     }
 
     componentWillMount() {
-        this.requestInvestData().then((responseJson) => {
-            console.log("requestInvestData"+responseJson.body.list.length)
-            this.setState({
-                projectList: responseJson.body.list
-            })
-            console.log("this.state.projectList" + this.state.projectList)
-        });
+        this._onRefresh();
     }
 
     render() {
@@ -62,9 +112,12 @@ export default class InvestTab extends Component {
                         keyExtractor={(item, index) => item.iteId}
                         data={this.state.projectList}
                         renderItem={({item}) => {
-                            console.log("...." + item)
                             return <Item data={item} name="AA"/>
                         }}
+                        refreshing={this.state.isRefreshing}
+                        onEndReached={this._onLoadMore.bind(this)}
+                        onRefresh={this._onRefresh.bind(this)}
+                        onEndReachedThreshold={0.5}
                     />
                 </View>)
     }
@@ -74,7 +127,6 @@ export default class InvestTab extends Component {
 
 class Item extends Component {
     getSourceXinOrDi() {
-        console.log("this.props.name" + this.props.name)
         return (this.props.data.iteType === 1 ? require('../../image/di.png') : require('../../image/xin.png'))
     }
 
@@ -149,7 +201,7 @@ class Item extends Component {
                 </View>
                 <View style={{flexDirection: 'row', height: 2, width: '90%'}}>
                     <Text style={{
-                        marginLeft:(this.getProgressWidth(data)),
+                        marginLeft: (this.getProgressWidth(data)),
                         textAlign: "right",
                         alignSelf: 'flex-start'
                     }}>{(data.iteProgress * 100).toFixed(2)}%</Text>
@@ -167,6 +219,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#F5FCFF',
     },
+
     fragment: {
         width: '100%',
         height: '100%',
