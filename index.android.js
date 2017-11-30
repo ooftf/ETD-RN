@@ -3,7 +3,7 @@
  * https://github.com/facebook/react-native
  * @flow
  */
-
+import App from './App';
 import React, {
     Component
 } from 'react';
@@ -25,13 +25,6 @@ import GuideScreen from "./src/components/GuideScreen";
 import LoginScreen from "./src/components/LoginScreen";
 import HomeScreen from "./src/components/HomeScreen";
 
-const styles = StyleSheet.create({
-    headerLeft: {
-        height: 50,
-        width: 50,
-        padding: 10
-    }
-})
 const AppNavigator = StackNavigator({
     Main: {screen: Main},
     Show: {screen: ShowScreen},
@@ -62,5 +55,27 @@ const AppNavigator = StackNavigator({
     },
 
 })
-
+const styles = StyleSheet.create({
+    headerLeft: {
+        height: 50,
+        width: 50,
+        padding: 10
+    },
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F5FCFF',
+    },
+    welcome: {
+        fontSize: 20,
+        textAlign: 'center',
+        margin: 10,
+    },
+    instructions: {
+        textAlign: 'center',
+        color: '#333333',
+        marginBottom: 5,
+    },
+});
 AppRegistry.registerComponent('Hello', () => AppNavigator);

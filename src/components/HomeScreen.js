@@ -36,8 +36,7 @@ const MyTab = TabNavigator({
         navigationOptions: {
             tabBarLabel: '项目列表',
             tabBarIcon: ({tintColor, focused}) => (
-                focused
-                    ?
+                focused ?
                     <Image
                         source={require('../image/bottom_projects_selected.png')}
                         style={styles.tabBarIcon}
@@ -93,20 +92,20 @@ const MyTab = TabNavigator({
     animationEnabled: false,
     tabBarOptions: {
         style: {
-            backgroundColor:'white',
+            backgroundColor: 'white',
             height: 49,
         },
         tabStyle: {
             width: 100,
-            height:49,
+            height: 49,
         },
-        iconStyle:{
+        iconStyle: {
             width: 36,
-            height:36,
+            height: 36,
         },
-        indicatorStyle:{
+        indicatorStyle: {
             width: 0,
-            height:0,
+            height: 0,
         },
         activeBackgroundColor: 'white',
         inactiveBackgroundColor: 'white',
@@ -120,6 +119,7 @@ export default class HomeScreen extends Component {
     static navigationOptions = {
         header: null
     };
+
     render() {
         return (
             <MyTab/>

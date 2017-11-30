@@ -9,12 +9,15 @@ import {
     Dimensions,
 } from 'react-native';
 import React, {Component} from 'react';
+
 var ViewPager = require('react-native-viewpager');
 
 var deviceWidth = Dimensions.get('window').width;
+var swiperHeight = deviceWidth * 240 / 480
 
 import Swiper from 'react-native-swiper'
-import constant from "../engine/constant";
+import request from "../engine/Net";
+
 
 export default class HomeTab extends Component {
     constructor() {
@@ -32,20 +35,12 @@ export default class HomeTab extends Component {
         console.log("onPageSelected::" + e.nativeEvent.position)
         this.setState({page: e.nativeEvent.position});
     }
+
     getHomeData() {
-        return fetch(constant.baseUrl+'more/index', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: 'useClientVersion=1&terminalType=2',
-        }).then(
-            (response) => {
-                return response.json()
-            }
-        ).catch((error) => {
-            console.error(error);
-        });
+        var param = new Map()
+        param.set('useClientVersion', '1')
+        param.set('terminalType', '2')
+        return request('more/index', param)
     }
 
     componentDidMount() {
@@ -61,31 +56,51 @@ export default class HomeTab extends Component {
             })
         })
     }
+
     render() {
-        var {body} = this.state
+        let {body} = this.state
         if (body === null) {
             return (<Text>加载中。。。</Text>)
         }
-        var pages = [];
+        let pages = [];
         let length = body.picList.length;
-        for (var i = 0; i < length; i++) {
+        for (let i = 0; i < length; i++) {
             pages.push(
-                <View key={i} style={styles.page}>
-                    <Image
-                        resizeMode="stretch"
-                        style={styles.image}
-                        source={{uri: body.picList[i].picUrl}}
-                    />
-                </View>
+                <Image
+                    key={i}
+                    resizeMode="stretch"
+                    style={styles.image}
+                    source={{uri: body.picList[i].picUrl}}
+                />
             );
         }
         return (
             <View style={styles.container}>
-                    <Swiper style={styles.swiper} horizontal={true}  autoplay ={true} height={200}
-                    dot={<View style={{backgroundColor:'#FFFFFF', width: 6, height: 6,borderRadius: 3, marginLeft: 5, marginRight: 5, marginTop: 3,}} />}
-                            activeDot={<View style={{backgroundColor: '#FFFFFF', width: 9, height: 9, borderRadius: 4.5, marginLeft: 5, marginRight: 5, marginTop: 3,}} />}>
+                <View style={styles.swiperWrapper}>
+                    <Swiper
+                        horizontal={true}
+                        autoplay={true}
+                        dot={<View style={{
+                            backgroundColor: '#FFFFFF',
+                            width: 6,
+                            height: 6,
+                            borderRadius: 3,
+                            marginLeft: 5,
+                            marginRight: 5,
+                            marginTop: 3,
+                        }}/>}
+                        activeDot={<View style={{
+                            backgroundColor: '#FFFFFF',
+                            width: 9,
+                            height: 9,
+                            borderRadius: 4.5,
+                            marginLeft: 5,
+                            marginRight: 5,
+                            marginTop: 3,
+                        }}/>}>
                         {pages}
                     </Swiper>
+                </View>
                 <Text>Footer..</Text>
             </View>
         )
@@ -97,19 +112,11 @@ const styles = StyleSheet.create({
     },
     image: {
         width: deviceWidth,
-        height: 200,
+        height: swiperHeight,
     },
-    page: {
+    swiperWrapper: {
         width: deviceWidth,
-        height: 200,
-    },
-    viewPager: {
-        height: 200,
-        width: deviceWidth,
-    },
-    swiper: {
-        height: 200,
-        width: deviceWidth,
+        height: swiperHeight,
     },
     text: {
         color: '#fff',
