@@ -6,10 +6,10 @@ import {
 import {
     TabNavigator,
 } from 'react-navigation';
-import HomeTab from "./Tabs/HomeTab";
-import ProjectTab from "./Tabs/ProjectTab";
-import AccountTab from "./Tabs/AccountTab";
-import MoreTab from "./Tabs/MoreTab";
+import HomeTab from "./tabs/HomeTab";
+import ProjectTab from "./tabs/ProjectTab";
+import AccountTab from "./tabs/AccountTab";
+import MoreTab from "./tabs/MoreTab";
 
 const MyTab = TabNavigator({
     HomeTab: {
