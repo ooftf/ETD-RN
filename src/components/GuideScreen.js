@@ -31,8 +31,8 @@ export default class GuideScreen extends Component {
                     <Image style={styles.fillView} source={require("../image/guide_second.png")}>
                         <TouchableOpacity
                             onPress={()=>{
-                                ToastNative.show('Awesome', ToastNative.SHORT)
-                                //this.props.navigation.navigate("HomeScreen")
+                                //ToastNative.show('Awesome', ToastNative.SHORT)
+                                this.props.navigation.navigate("HomeScreen")
                             }}>
                             <Image
                                 style={styles.skip}

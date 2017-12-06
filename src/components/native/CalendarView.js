@@ -9,6 +9,7 @@ import { requireNativeComponent, View } from 'react-native';
 var iface = {
     name: 'Calendar',
     propTypes: {
+        date: PropTypes.string,
         ...View.propTypes // 包含默认的View的属性
     },
 };

@@ -10,9 +10,14 @@ import React, {Component} from 'react';
 export default class MoreTab extends Component{
     render(){
         return(<View>
-            <Calendar style={styles.calendar}/>
+            <Calendar style={styles.calendar} date={getDate()}/>
         </View>)
     }
+}
+function getDate(){
+    var date = new Date()
+    date.setMonth(10)
+    return date.getTime().toString()
 }
 var styles = {
     calendar:{
