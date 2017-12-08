@@ -1,10 +1,6 @@
 import React, {Component} from 'react';
-import {
-    Image,
-    StyleSheet,
-    ActivityIndicator, TouchableOpacity,
-} from 'react-native';
-import constant from "../engine/constant";
+import {ActivityIndicator, Image, StyleSheet, TouchableOpacity,} from 'react-native';
+import request from "../engine/Net";
 
 export default class ImageCode extends Component {
     constructor() {
@@ -23,10 +19,7 @@ export default class ImageCode extends Component {
             imageBase64: null,
             state: 0
         })
-        return fetch(constant.baseUrl+'system/identify')
-            .then((response) => {
-                return response.json()
-            })
+        return request('system/identify')
             .then((responseJson) => {
                 console.log("responseJsonresponseJson" + responseJson.time)
                 this.setState({
@@ -36,11 +29,6 @@ export default class ImageCode extends Component {
                 })
                 return responseJson
             })
-            .catch((error) => {
-                this.setState({
-                    state: 2
-                })
-            });
     }
 
     componentWillMount() {
