@@ -23,12 +23,17 @@ export default class AccountTab extends Component {
                 title="show log"
                 onPress={() => Log.e(this.state.text.toString())}/>
             <CheckBox
+                style={styles.CheckBox}
                 checkedSource={require('../../image/icon_checked.png')}
                 uncheckedSource={require('../../image/icon_unchecked.png')}
                 onPress={(checked) => {
                     this.setState({text: checked})
                 }}
                 text={'成功了'}/>
+            <Button
+                style={styles.button}
+                title="show log"
+                onPress={() => Log.e(this.state.text.toString())}/>
         </View>)
     }
 }
@@ -40,5 +45,12 @@ var styles = {
     button: {
         width: 300,
         height: 50,
+    },
+    CheckBox:{
+        width: 100,
+        height: 30,
+        flexDirection: 'row',
+        justifyContent:'center',
+        alignContent:'center',
     }
 }

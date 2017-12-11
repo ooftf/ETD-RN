@@ -11,16 +11,16 @@ export  class CheckBox extends Component {
     render() {
         return (
             <TouchableOpacity
-                onPress = {this.onPress}
-                style={{flexDirection: 'row'}}>
-                <Image source={this.getSource()}/>
+                onPress = {this.onPress.bind(this)}
+                style={this.props.style}>
+                <Image source={this.getSource()}
+                style={{height:36,width:36}}/>
                 <Text>{this.props.text}</Text>
             </TouchableOpacity>
         )
     }
     //= ()=>
     onPress (){
-
         this.setState(previousState=>{
             if( this.props.onPress){
                 this.props.onPress(!previousState.checked);
